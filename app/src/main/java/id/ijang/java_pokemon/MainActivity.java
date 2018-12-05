@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import id.ijang.java_pokemon.Common.Common;
@@ -58,5 +60,23 @@ public class MainActivity extends AppCompatActivity {
         //Register Broadcast
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(showDetail,new IntentFilter(Common.KEY_ENABLE_HOME));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getGroupId()){
+            case android.R.id.home:
+                toolbar.setTitle("Pokemon List");
+
+                //Clear all fragment detail and pop to list fragment
+                getSupportFragmentManager().popBackStack("detail", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+
+                getSupportActionBar().setDisplayShowHomeEnabled(false);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                break;
+                default:
+                    break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
