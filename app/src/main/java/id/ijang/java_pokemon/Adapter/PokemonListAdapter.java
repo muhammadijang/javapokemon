@@ -1,7 +1,9 @@
 package id.ijang.java_pokemon.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
+import id.ijang.java_pokemon.Common.Common;
 import id.ijang.java_pokemon.Interface.IItemClickListener;
 import id.ijang.java_pokemon.Model.Pokemon;
 import id.ijang.java_pokemon.R;
@@ -46,7 +49,9 @@ public class PokemonListAdapter extends RecyclerView.Adapter<PokemonListAdapter.
         holder.setiItemClickListener(new IItemClickListener() {
             @Override
             public void onClick(View view, int position) {
-                Toast.makeText(context, "Click at Pokemon: "+pokemonList.get(position).getName(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "Click at Pokemon: "+pokemonList.get(position).getName(), Toast.LENGTH_SHORT).show();
+                LocalBroadcastManager.getInstance(context)
+                        .sendBroadcast(new Intent(Common.KEY_ENABLE_HOME).putExtra("position",position));
             }
         });
     }

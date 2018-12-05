@@ -3,7 +3,7 @@
     package="id.ijang.java_pokemon">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-
+    
     <application
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
