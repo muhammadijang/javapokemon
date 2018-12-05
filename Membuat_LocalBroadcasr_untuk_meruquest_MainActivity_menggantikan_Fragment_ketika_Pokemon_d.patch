@@ -1,0 +1,203 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(date 1543999610000)
++++ app/src/main/AndroidManifest.xml	(date 1544004945000)
+@@ -3,7 +3,7 @@
+     package="id.ijang.java_pokemon">
+ 
+     <uses-permission android:name="android.permission.INTERNET"/>
+-
++    
+     <application
+         android:usesCleartextTraffic="true"
+         android:allowBackup="true"
+Index: app/src/main/java/id/ijang/java_pokemon/Adapter/PokemonListAdapter.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/id/ijang/java_pokemon/Adapter/PokemonListAdapter.java	(date 1543999610000)
++++ app/src/main/java/id/ijang/java_pokemon/Adapter/PokemonListAdapter.java	(date 1544004945000)
+@@ -1,7 +1,9 @@
+ package id.ijang.java_pokemon.Adapter;
+ 
+ import android.content.Context;
++import android.content.Intent;
+ import android.support.annotation.NonNull;
++import android.support.v4.content.LocalBroadcastManager;
+ import android.support.v7.widget.RecyclerView;
+ import android.view.LayoutInflater;
+ import android.view.View;
+@@ -14,6 +16,7 @@
+ 
+ import java.util.List;
+ 
++import id.ijang.java_pokemon.Common.Common;
+ import id.ijang.java_pokemon.Interface.IItemClickListener;
+ import id.ijang.java_pokemon.Model.Pokemon;
+ import id.ijang.java_pokemon.R;
+@@ -46,7 +49,9 @@
+         holder.setiItemClickListener(new IItemClickListener() {
+             @Override
+             public void onClick(View view, int position) {
+-                Toast.makeText(context, "Click at Pokemon: "+pokemonList.get(position).getName(), Toast.LENGTH_SHORT).show();
++//                Toast.makeText(context, "Click at Pokemon: "+pokemonList.get(position).getName(), Toast.LENGTH_SHORT).show();
++                LocalBroadcastManager.getInstance(context)
++                        .sendBroadcast(new Intent(Common.KEY_ENABLE_HOME).putExtra("position",position));
+             }
+         });
+     }
+Index: app/src/main/java/id/ijang/java_pokemon/Common/Common.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/id/ijang/java_pokemon/Common/Common.java	(date 1543999610000)
++++ app/src/main/java/id/ijang/java_pokemon/Common/Common.java	(date 1544004945000)
+@@ -7,4 +7,5 @@
+ 
+ public class Common {
+     public static List<Pokemon> commonPokemonList = new ArrayList<>();
++    public static final String KEY_ENABLE_HOME = "enable_home";
+ }
+Index: app/src/main/java/id/ijang/java_pokemon/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/id/ijang/java_pokemon/MainActivity.java	(date 1543999610000)
++++ app/src/main/java/id/ijang/java_pokemon/MainActivity.java	(date 1544004945000)
+@@ -1,20 +1,62 @@
+ package id.ijang.java_pokemon;
+ 
++import android.content.BroadcastReceiver;
++import android.content.Context;
++import android.content.Intent;
++import android.content.IntentFilter;
++import android.net.ConnectivityManager;
++import android.support.v4.app.Fragment;
++import android.support.v4.app.FragmentTransaction;
++import android.support.v4.content.LocalBroadcastManager;
+ import android.support.v7.app.AppCompatActivity;
+ import android.os.Bundle;
+ import android.support.v7.widget.Toolbar;
++import android.widget.Toast;
++
++import id.ijang.java_pokemon.Common.Common;
++import id.ijang.java_pokemon.Model.Pokemon;
+ 
+ public class MainActivity extends AppCompatActivity {
+ 
+     Toolbar toolbar;
+ 
++    BroadcastReceiver showDetail = new BroadcastReceiver() {
++        @Override
++        public void onReceive(Context context, Intent intent) {
++            if (intent.getAction().toString().equals(Common.KEY_ENABLE_HOME)){
++                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
++                getSupportActionBar().setDisplayShowHomeEnabled(true);
++
++                //Display Fragment
++                Fragment detailFragment = PokemonDetail.getInstance();
++                int position = intent.getIntExtra("postition", -1);
++                Bundle bundle = new Bundle();
++                bundle.putInt("position",position);
++                detailFragment.setArguments(bundle);
++
++                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
++                fragmentTransaction.replace(R.id.list_pokemon,detailFragment);
++                fragmentTransaction.addToBackStack("detail");
++                fragmentTransaction.commit();
++
++                //Set Pokemon name for Toolbar
++                Pokemon pokemon = Common.commonPokemonList.get(position);
++                toolbar.setTitle(pokemon.getName());
++            }
++        }
++    };
++
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+         setContentView(R.layout.activity_main);
+ 
+-        toolbar = (Toolbar)findViewById(R.id.toolbar);
++        toolbar = (Toolbar) findViewById(R.id.toolbar);
+         toolbar.setTitle("Pokemon List");
+         setSupportActionBar(toolbar);
++
++        //Register Broadcast
++        LocalBroadcastManager.getInstance(this)
++                .registerReceiver(showDetail,new IntentFilter(Common.KEY_ENABLE_HOME));
+     }
+ }
+Index: app/src/main/java/id/ijang/java_pokemon/PokemonDetail.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/id/ijang/java_pokemon/PokemonDetail.java	(date 1544004945000)
++++ app/src/main/java/id/ijang/java_pokemon/PokemonDetail.java	(date 1544004945000)
+@@ -0,0 +1,36 @@
++package id.ijang.java_pokemon;
++
++
++import android.os.Bundle;
++import android.support.v4.app.Fragment;
++import android.view.LayoutInflater;
++import android.view.View;
++import android.view.ViewGroup;
++
++
++/**
++ * A simple {@link Fragment} subclass.
++ */
++public class PokemonDetail extends Fragment {
++
++    static PokemonDetail instance;
++
++    public static PokemonDetail getInstance() {
++        if (instance == null)
++            instance = new PokemonDetail();
++        return instance;
++    }
++
++    public PokemonDetail(){
++        // Required empty public constructor
++    }
++
++
++    @Override
++    public View onCreateView(LayoutInflater inflater, ViewGroup container,
++                             Bundle savedInstanceState) {
++        // Inflate the layout for this fragment
++        return inflater.inflate(R.layout.fragment_pokemon_detail, container, false);
++    }
++
++}
+Index: app/src/main/res/layout/fragment_pokemon_detail.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/fragment_pokemon_detail.xml	(date 1544004945000)
++++ app/src/main/res/layout/fragment_pokemon_detail.xml	(date 1544004945000)
+@@ -0,0 +1,14 @@
++<?xml version="1.0" encoding="utf-8"?>
++<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:tools="http://schemas.android.com/tools"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent"
++    tools:context=".PokemonDetail">
++
++    <!-- TODO: Update blank fragment layout -->
++    <TextView
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:text="@string/hello_blank_fragment" />
++
++</FrameLayout>
+\ No newline at end of file

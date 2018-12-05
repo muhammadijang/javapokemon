@@ -1,0 +1,25 @@
+diff --git a/app/src/main/java/id/ijang/java_pokemon/Common/Common.java b/app/src/main/java/id/ijang/java_pokemon/Common/Common.java
+index b2a0446..266bcc9 100644
+--- a/app/src/main/java/id/ijang/java_pokemon/Common/Common.java
++++ b/app/src/main/java/id/ijang/java_pokemon/Common/Common.java
+@@ -6,6 +6,6 @@ import java.util.List;
+ import id.ijang.java_pokemon.Model.Pokemon;
+ 
+ public class Common {
+-    public static List<Pokemon> commonPokemonList = new ArrayList<>();
+     public static final String KEY_ENABLE_HOME = "enable_home";
++    public static List<Pokemon> commonPokemonList = new ArrayList<>();
+ }
+diff --git a/app/src/main/java/id/ijang/java_pokemon/MainActivity.java b/app/src/main/java/id/ijang/java_pokemon/MainActivity.java
+index 76c4475..7f39fe8 100644
+--- a/app/src/main/java/id/ijang/java_pokemon/MainActivity.java
++++ b/app/src/main/java/id/ijang/java_pokemon/MainActivity.java
+@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
+ 
+                 //Display Fragment
+                 Fragment detailFragment = PokemonDetail.getInstance();
+-                int position = intent.getIntExtra("postition", -1);
++                int position = intent.getIntExtra("position", -1);
+                 Bundle bundle = new Bundle();
+                 bundle.putInt("position",position);
+                 detailFragment.setArguments(bundle);

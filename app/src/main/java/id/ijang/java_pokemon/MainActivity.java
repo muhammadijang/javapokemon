@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //Display Fragment
                 Fragment detailFragment = PokemonDetail.getInstance();
-                int position = intent.getIntExtra("postition", -1);
+                int position = intent.getIntExtra("position", -1);
                 Bundle bundle = new Bundle();
                 bundle.putInt("position",position);
                 detailFragment.setArguments(bundle);
