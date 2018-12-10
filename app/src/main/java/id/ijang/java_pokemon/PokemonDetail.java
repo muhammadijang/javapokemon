@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import id.ijang.java_pokemon.Adapter.PokemonTypeAdapter;
 import id.ijang.java_pokemon.Common.Common;
 import id.ijang.java_pokemon.Model.Pokemon;
 
@@ -86,6 +87,10 @@ public class PokemonDetail extends Fragment {
 
         pokemon_weight.setText("Weight: "+pokemon.getWeight());
         pokemon_weight.setText("Height: "+pokemon.getHeight());
+
+        //Set Type
+        PokemonTypeAdapter typeAdapter = new PokemonTypeAdapter(getActivity(),pokemon.getType());
+        recycler_type.setAdapter(typeAdapter);
     }
 
 }
